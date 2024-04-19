@@ -1,52 +1,92 @@
 ﻿using System;
 
+namespace module2;
 
-namespace module1
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            Matrix myMatrix = new Matrix(3, 3);
-            myMatrix.FillMatrixRandom(3, 3, 1, 100);
-            Console.WriteLine("Matrix:");
-            myMatrix.PrintMatrix();
-            Console.ReadKey();
-        }
+        Console.ReadKey();
     }
-    class Matrix
-    {
-        private int[][] matrix;
+}
+interface ITransaction
+{
+    void ExecuteTransaction();
+    void CheckTransactionState();
+}
+class FinancialTransaction : ITransaction
+{
+    public int Amount { get; set; }
+    public DateTime Date { get; set; }
 
-        public Matrix(int rows, int columns)
-        {
-            matrix = new int[rows][];
-            for (int i = 0; i < rows; i++)
-            {
-                matrix[i] = new int[columns];
-            }
-        }
-        public void FillMatrixRandom(int rows, int columns, int min, int max)
-        {
-            Random rand = new Random();
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < columns; j++)
-                {
-                    matrix[i][j] = rand.Next(min, max + 1);
-                }
-            }
-        }
-        public void PrintMatrix()
-        {
-            for (int i = 0; i < matrix.Length; i++)
-            {
-                for (int j = 0; j < matrix[i].Length; j++)
-                {
-                    Console.Write(matrix[i][j] + "\t");
-                }
-                Console.WriteLine();
-            }
-        }
+    public FinancialTransaction(int amount, DateTime date)
+    {
+        Amount = amount;
+        Date = date;
+    }
+    public virtual void ExecuteTransaction()
+    { 
+        Console.WriteLine("Виконуємо транзакцію...");   
+    }
+    public virtual void CheckTransactionState()
+    {
+        Console.WriteLine("Перевіряємо транзакцію");
+    }
+}
+public class Transction
+{
+    public int TransactionID { get; set; }
+    public string Description { get; set; }
+
+    public Transction(int transactionid, string description)
+    {
+        TransactionID = transactionid;
+        Description = description;
+    }
+    ~Transction()
+    {
+        Console.WriteLine($"Транзакція {TransactionID} відбулася");
+    }
+}
+
+public class DepositTransaction : Transction
+{
+    public int DepositAmount { get; set; }
+    public DateTime DepositDate { get; set; }
+
+    public DepositTransaction(int transactionID, string description, int amount, DateTime date)
+        : base(transactionID, description)
+    {
+        DepositAmount = amount;
+        DepositDate = date;
+    }
+}
+
+public class WithdrawalTransaction : Transction
+{
+    public int WithdrawlAmount { get; set; }
+    public DateTime WithdrawlDate { get; set; }
+
+    public WithdrawalTransaction(int transactionID, string description, int amount ,DateTime date)
+        :base (transactionID, description)
+    {
+        WithdrawlAmount = amount;
+        WithdrawlDate = date;
+    }
+}
+
+class TransactionException : Exception
+{
+    public TransactionException(string message) : base(message)
+    {
+    }
+}
+class TransactionCompletedEventArgs : EventArgs
+{
+    public bool IsSuccessful { get; set; }
+
+    public TransactionCompletedEventArgs(bool isSuccessful)
+    {
+        IsSuccessful = isSuccessful;
     }
 }
